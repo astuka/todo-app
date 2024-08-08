@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Button, FormControl, InputLabel, Input } from '@mui/material';
 import './App.css';
 
 function App() {
@@ -7,15 +8,25 @@ function App() {
 
   const addTodo = (event) => {
     //when button click
+    event.preventDefault(); //stops refresh bug
     setTodos([...todos, input]);
+    setInput('');
 
   }
   
   return (
     <div className="App">
       <h1>Todo App</h1>
-      <input value={input} onChange={event => setInput(event.target.value)}/>
-      <button onClick={addTodo}>Add Todo</button>
+      <form>  {/** wrapping it in form allows for pressing enter to submit */}
+        <FormControl>
+          <InputLabel>Enter Todo Here</InputLabel>
+          <Input value={input} onChange={event => setInput(event.target.value)}/>
+        </FormControl>
+        {/**<input value={input} onChange={event => setInput(event.target.value)}/>*/}
+        <Button disabled={!input} type='submit' onClick={addTodo} variant="contained">
+          Add Todo
+        </Button>
+      </form>
 
       <ul>
         {todos.map(todo => (
