@@ -1,4 +1,4 @@
-import { Avatar, List, ListItem, ListItemAvatar, ListItemText, ListItemIcon } from '@mui/material'
+import { List, ListItem, ListItemAvatar, ListItemText, IconButton, Checkbox } from '@mui/material'
 import React from 'react'
 import './Todo.css';
 
@@ -7,9 +7,9 @@ function Todo(props) { //props is sort of a "constructor" term, that allows you 
     <List>
         <ListItem>
             <ListItemAvatar>
-                <Avatar>
-                    <ListItemIcon />
-                </Avatar>
+                <IconButton type='submit' onClick={() => props.deleteTodo(props.id)} variant="contained">
+                  <Checkbox />
+                </IconButton>
             </ListItemAvatar>
             <ListItemText primary={props.text} secondary="[Deadline here]"/>
         </ListItem>

@@ -2,26 +2,48 @@ import React, { useState, useEffect} from 'react';
 import { Button, FormControl, InputLabel, Input } from '@mui/material';
 import './App.css';
 import Todo from './Todo';
-import db from './firebase';
-import { doc, onSnapshot, collection, query, where } from "firebase/firestore";
+import { db } from './firebase';
+import { collection, getDocs, addDoc, doc, deleteDoc } from "firebase/firestore";
 
 function App() {
+
+  //establishes default state
   const [todos, setTodos] = useState([]);
   const [input, setInput] = useState('');
 
-  useEffect(() => { //BAD SYNTAX
-    //runs on start
-    const q = query(collection(db, "todos"))
-    const unsub = onSnapshot(q, (querySnapshot) => {
-      console.log("Data", querySnapshot.docs.map(d => doc.data()));
-    });
+  //deleting function
+  const deleteTodo = async (id) => {
+    await deleteDoc(doc(db, 'todos', id));
+
+    setTodos(todos.filter(todo => todo.id !== id));
+  }
+
+  //onStart update function
+  useEffect(() => {
+    const fetchTodos = async () => {
+      const todosCollection = collection(db, 'todos');
+      const todosSnapshot = await getDocs(todosCollection);
+      const todosList = todosSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setTodos(todosList);
+    };
+    
+    fetchTodos();
   }, []);
 
-  const addTodo = (event) => {
+  const addTodo = async (event) => {
     //when button click
     event.preventDefault(); //stops refresh bug
-    setTodos([...todos, input]);
-    setInput('');
+    
+    //adding task to Firestore
+    const docRef = await addDoc(collection(db, 'todos'), {
+      task:input,
+    });
+
+    setTodos([...todos, {id: docRef.id, task: input}]);
+    setInput(''); // clear input field
 
   }
   
@@ -41,7 +63,7 @@ function App() {
 
       <ul>
         {todos.map(todo => (
-          <Todo text={todo}/>
+          <Todo key={todo.id} id={todo.id} text={todo.task} deleteTodo={deleteTodo}/>
         ))}
       </ul>
     </div>

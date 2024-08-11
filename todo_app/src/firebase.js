@@ -4,7 +4,6 @@ import { getFirestore } from "firebase/firestore";
 
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   //its a secret!
 };
@@ -14,4 +13,4 @@ const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 
-export default db;
+export {db};
