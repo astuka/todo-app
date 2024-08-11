@@ -1,10 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import { Button, FormControl, InputLabel, Input } from '@mui/material';
 import './App.css';
+import Todo from './Todo';
+import db from './firebase';
+import { doc, onSnapshot, collection, query, where } from "firebase/firestore";
 
 function App() {
-  const [todos, setTodos] = useState(['task1','task2']);
-  const [input, setInput] = useState('')
+  const [todos, setTodos] = useState([]);
+  const [input, setInput] = useState('');
+
+  useEffect(() => { //BAD SYNTAX
+    //runs on start
+    const q = query(collection(db, "todos"))
+    const unsub = onSnapshot(q, (querySnapshot) => {
+      console.log("Data", querySnapshot.docs.map(d => doc.data()));
+    });
+  }, []);
 
   const addTodo = (event) => {
     //when button click
@@ -30,7 +41,7 @@ function App() {
 
       <ul>
         {todos.map(todo => (
-          <li>{todo}</li>
+          <Todo text={todo}/>
         ))}
       </ul>
     </div>
